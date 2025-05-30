@@ -17,7 +17,7 @@ func ReverseHexXOR(hexString string, k int) []byte {
 		result = append(result, hexBytes[i]^key)
 	}
 
-	commonRunes := []string{"e", "t", "a", "o", "i", "n", "s", "r", "h", " "}
+	commonRunes := []string{"e", "t", "a", "o", "i", "n", " ", "s", "h", "r", "d", "l", "u"}
 	readabilityPoints := 0
 
 	for i := range commonRunes {
