@@ -8,42 +8,47 @@ import (
 	"strings"
 )
 
-func ReverseHexXOR(hexString string, k int) []byte {
-	hexBytes, err := hex.DecodeString(hexString)
-	if err != nil {
-		return nil
-	}
+func ReverseHexXOR(hexString string, k int) (string, int) {
+	hexBytes, _ := hex.DecodeString(hexString)
 	var result []byte
 	key := byte(k)
 	for i := 0; i < len(hexBytes); i++ {
 		result = append(result, hexBytes[i]^key)
 	}
 
-	commonRunes := []string{"e", "t", "a", "o", "i", "n", " ", "s", "h", "r", "d", "l", "u"}
+	mostCommonRunes := []string{"e", "t", "a", "o", "i", "n"}
+	otherCommonRunes := []string{"s", "h", "r", "d", "l", "u"}
 	readabilityPoints := 0
 
-	for i := range commonRunes {
-		if strings.Count(string(result), commonRunes[i]) > 1 {
-			readabilityPoints++
+	byteStr := string(result)
+	if strings.Count(byteStr, " ") > 1 {
+		readabilityPoints += 3
+	}
+	for i := range mostCommonRunes {
+		if strings.Count(byteStr, mostCommonRunes[i]) > 1 {
+			readabilityPoints += 2
+		}
+		if strings.Count(byteStr, otherCommonRunes[i]) > 1 {
+			readabilityPoints += 1
 		}
 	}
+	return string(result), readabilityPoints
 
-	if readabilityPoints > 4 {
-		return result
-	} else {
-		return nil
-	}
 }
 
 func main() {
-	file, _ := os.Open("set-1-basics\\single-character-xor\\4.txt")
+	file, _ := os.Open("set-1-basics/single-character-xor/4.txt")
 	scanner := bufio.NewScanner(file)
+	bestScore := 0
+	bestText := ""
 	for scanner.Scan() {
 		for k := 0; k < 256; k++ {
-			decipheredString := ReverseHexXOR(scanner.Text(), k)
-			if decipheredString != nil {
-				fmt.Println(string(decipheredString))
+			decipheredString, score := ReverseHexXOR(scanner.Text(), k)
+			if score > bestScore {
+				bestScore = score
+				bestText = decipheredString
 			}
 		}
 	}
+	fmt.Println(bestText)
 }
